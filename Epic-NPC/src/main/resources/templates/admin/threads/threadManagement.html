@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản lý Threads - ${game.name}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <style>
+        /* Container flex layout */
+        .container-fluid {
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+        /* Đảm bảo nội dung chính bên phải chiếm hết không gian */
+        .main-content {
+            padding: 20px;
+            width: 100%; /* Nội dung chính chiếm toàn bộ phần còn lại */
+        }
+
+        /* Đảm bảo bảng chiếm hết chiều rộng của nội dung chính */
+        .table {
+            margin-top: 20px;
+            width: 100%; /* Bảng full width */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Sidebar Navbar (giữ nguyên không chỉnh sửa) -->
+    <div id="sidebar" th:replace="admin/admin-navbar :: sidebar"></div>
+
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <h2 class="mb-4">Quản lý Threads cho Game: <span th:text="${game.name}"></span></h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nội Dung</th>
+                <th>Hành Động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="thread : ${threads}">
+                <td th:text="${thread.id}"></td>
+                <td th:text="${thread.content}"></td>
+                <td>
+                    <form th:action="@{/admin/threads/{gameId}/{threadId}/delete(gameId=${game.id}, threadId=${thread.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="/admin/threads" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

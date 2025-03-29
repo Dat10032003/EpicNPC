@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Thông Tin Người Dùng</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <style>
+        /* Container flex layout */
+        .container-fluid {
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Main content fills remaining space */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        /* Ensure content container fills the entire width */
+        .content-container {
+            max-width: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Sidebar Navbar -->
+    <div id="sidebar" th:replace="admin/admin-navbar :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-container">
+            <h2 class="mb-4">Thông Tin Người Dùng</h2>
+            <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+            <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>Phone:</strong> <span th:text="${user.phone}"></span></p>
+            <p><strong>Avatar:</strong> <img th:src="@{${user.avatar}}" alt="Avatar" style="width:100px;height:auto;"/></p>
+            <a href="/admin/users" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

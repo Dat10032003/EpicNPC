@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản lý Game - EpicNPC Marketplace</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <style>
+        /* Container flex layout */
+        .container-fluid {
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+        /* Đảm bảo nội dung chính bên phải chiếm hết không gian */
+        .main-content {
+            padding: 20px;
+            width: 100%; /* Nội dung chính chiếm toàn bộ phần còn lại */
+        }
+
+        /* Table wrapper styling */
+        .table-wrapper {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Cho bảng chiếm hết chiều rộng */
+        }
+
+        .btn-action:hover {
+            background-color: #ffc107;
+            color: #ffffff;
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+
+        .modal-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <!-- Sidebar Navbar (giữ nguyên không chỉnh sửa) -->
+    <div id="sidebar" th:replace="admin/admin-navbar :: sidebar"></div>
+
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <h1 class="h2 mb-4">Quản lý Game</h1>
+        <div class="mb-4">
+            <a href="/admin/games/add" class="btn btn-success"><i class="fas fa-plus"></i> Thêm Game Mới</a>
+        </div>
+
+        <!-- Khu vực bảng -->
+        <div class="table-wrapper">
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>ID Game</th>
+                        <th>Tên Game</th>
+                        <th>Ngày Tạo</th>
+                        <th>Ghi Chú</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="game : ${games}">
+                        <td th:text="${game.id}"></td>
+                        <td th:text="${game.name}"></td>
+                        <td th:text="${#temporals.format(game.createdDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${game.note}"></td>
+                        <td>
+                            <a th:href="@{'/admin/games/edit/' + ${game.id}}" class="btn btn-sm btn-primary btn-action" title="Sửa">Sửa</a>
+                            <button class="btn btn-sm btn-danger btn-action" title="Xóa" th:onclick="|showDeleteModal('__${game.id}__', '__${game.name}__')|">Xóa</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-container">
+        <h5>Xóa Game</h5>
+        <p>Bạn có chắc chắn muốn xóa game: <strong id="gameName"></strong>?</p>
+        <form id="deleteForm" method="post">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+            <button type="submit" class="btn btn-danger">Xóa</button>
+            <button type="button" class="btn btn-secondary" onclick="hideDeleteModal()">Hủy</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function showDeleteModal(gameId, gameName) {
+        document.getElementById('gameName').textContent = gameName;
+        document.getElementById('deleteForm').action = '/admin/games/delete/' + gameId;
+        document.getElementById('deleteModal').classList.add('modal-visible');
+        document.body.classList.add('modal-open');
+    }
+
+    function hideDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('modal-visible');
+        document.body.classList.remove('modal-open');
+    }
+</script>
+</body>
+</html>

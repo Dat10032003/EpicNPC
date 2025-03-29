@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Navbar - EpicNPC Marketplace</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Epic<span style="color:#ffc107">NPC</span> Marketplace</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item d-flex align-items-center" th:if="${#authentication.principal != 'anonymousUser'}">
+                <a href="/profile" class="btn btn-outline-primary d-flex align-items-center mr-3">
+                    <img th:src="@{'/images/avatar/default_avatar.png'}" class="rounded-circle" alt="User Avatar" style="width: 30px; height: 30px; margin-right: 5px;">
+                    <span th:text="${#authentication.name}"></span>
+                </a>
+                <a href="/messages" class="btn btn-outline-primary mr-3">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="#" class="btn btn-outline-primary mr-3" data-toggle="modal" data-target="#notificationModal">
+                    <i class="fas fa-bell" style="color: #ffc107;"></i>
+                    <span th:if="${unreadNotificationsCount > 0}" th:text="${unreadNotificationsCount}"></span>
+                </a>
+
+                <a th:if="${#authorization.expression('hasAuthority(''ROLE_ADMIN'')')}" href="/admin" class="btn btn-outline-warning mr-3">Admin Dashboard</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline-light ml-2">Log out</button>
+                </form>
+            </li>
+            <li class="nav-item" th:if="${#authentication.principal == 'anonymousUser'}">
+                <a class="btn btn-success ml-2" href="/login">Log in</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Include notification modal -->
+<div th:replace="~{notificationModal :: notificationModal}"></div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+    let unreadCount = 0;
+
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        const currentUserId = /* Replace with user ID */;
+
+        // Lắng nghe thông báo từ server dành cho người dùng hiện tại
+        stompClient.subscribe('/topic/notifications/' + currentUserId, function (notification) {
+            displayNotification(notification.body);
+        });
+    });
+
+    function displayNotification(message) {
+        // Cập nhật biểu tượng chuông
+        const bellIcon = document.querySelector(".fa-bell span");
+        unreadCount += 1;
+        bellIcon.textContent = unreadCount;
+
+        // Thêm thông báo vào modal
+        const notificationList = document.querySelector("#notificationModal .list-group");
+        const notificationItem = document.createElement("li");
+        notificationItem.className = "list-group-item d-flex justify-content-between align-items-center";
+        notificationItem.innerHTML = `<span>${message}</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="markAsRead(${unreadCount})">Mark as Read</button>`;
+        notificationList.appendChild(notificationItem);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('/notifications/unreadCount')
+            .then(response => response.json())
+            .then(data => {
+                unreadCount = data.unreadCount;
+                document.querySelector(".fa-bell span").textContent = unreadCount > 0 ? unreadCount : '';
+            });
+    });
+
+    function markAsRead(notificationId) {
+        fetch(`/notifications/markAsRead/${notificationId}`, { method: 'POST' })
+            .then(() => {
+                unreadCount -= 1;
+                document.querySelector(".fa-bell span").textContent = unreadCount || '';
+            });
+    }
+
+    function markAllAsRead() {
+        fetch('/notifications/markAllAsRead', { method: 'POST' })
+            .then(() => {
+                unreadCount = 0;
+                document.querySelector(".fa-bell span").textContent = '';
+            });
+    }
+</script>
+
+

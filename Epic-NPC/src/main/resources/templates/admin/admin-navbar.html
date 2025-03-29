@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Admin Navbar - EpicNPC Marketplace</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse" th:fragment="sidebar">
+      <div class="user-info">
+        <img th:src="@{'/images/avatar/default_avatar.png'}" alt="User Avatar">
+        <h5 th:text="${#authentication.name}"></h5>
+        <span>Chào mừng bạn trở lại</span>
+      </div>
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" onclick="location.href='/admin';">
+              <i class="fas fa-tachometer-alt"></i>
+              Bảng điều khiển
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link btn btn-link text-white" onclick="location.href='/admin/games';">
+              <i class="fas fa-gamepad"></i> Quản lý Game
+            </button>
+          </li>
+
+          <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" onclick="location.href='/admin/threads';">
+              <i class="fas fa-comments"></i>
+              Quản lý Thread
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" onclick="location.href='/admin/users';">
+              <i class="fas fa-user"></i>
+              Quản lý Tài khoản
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" onclick="location.href='#';">
+              <i class="fas fa-envelope"></i>
+              Quản lý Message
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" onclick="location.href='#';">
+              <i class="fas fa-comment-dots"></i>
+              Quản lý Comment
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="back-home">
+        <button class="btn btn-outline-light" onclick="location.href='/';">
+          <i class="fas fa-home"></i> Quay trở về Homepage
+        </button>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

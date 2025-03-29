@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="notificationModal">
+  <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Notifications</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group" id="notificationList">
+            <!-- Các thông báo sẽ được thêm vào đây qua JavaScript -->
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="markAllAsRead()">Mark All as Read</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

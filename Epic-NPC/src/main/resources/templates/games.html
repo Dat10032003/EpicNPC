@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Game</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <h2>Danh Sách Game</h2>
+    <a href="/admin/games/add" class="btn btn-success mb-3">Thêm Game Mới</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Tên Game</th>
+            <th>Thể Loại</th>
+            <th>Mô Tả</th>
+            <th>Thao Tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="game : ${games}">
+            <td th:text="${game.name}"></td>
+            <td th:text="${game.genre}"></td>
+            <td th:text="${game.description}"></td>
+            <td>
+                <a th:href="@{/admin/games/delete/{id}(id=${game.id})}" class="btn btn-danger">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

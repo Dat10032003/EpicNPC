@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title th:text="${game.name} + ' Threads - EpicNPC Marketplace'">Game Threads</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .thread-container {
+            background-color: #2c3e50;
+            padding: 20px;
+            border-radius: 8px;
+            color: #ecf0f1;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .thread-container h1 {
+            font-size: 1.5em;
+            color: #1abc9c;
+        }
+        .thread-list {
+            margin-top: 20px;
+        }
+        .thread-item {
+            background-color: #34495e;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .thread-item:hover {
+            background-color: #1abc9c;
+        }
+        .thread-title {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 1.2em;
+            flex-grow: 1;
+        }
+        .thread-price {
+            color: #ecf0f1;
+            font-weight: bold;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <div class="thread-container">
+        <h1 th:text="${game.name} + ' Threads'">Threads</h1>
+        <a th:href="@{'/games/' + ${game.id} + '/threads/post'}" class="btn btn-success mb-4">Post New Thread</a>
+
+        <div class="thread-list">
+            <div th:each="thread : ${threads}" class="thread-item">
+                <!-- Title bên trái -->
+                <a th:href="@{'/games/' + ${game.id} + '/threads/' + ${thread.id}}"
+                   th:text="${thread.title}"
+                   class="thread-title">
+                </a>
+
+                <!-- Price bên phải -->
+                <span th:text="${thread.price} + ' $'"
+                      class="thread-price">
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

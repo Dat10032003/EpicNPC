@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản lý Người Dùng</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <style>
+        .container-fluid {
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+        /* Đảm bảo nội dung chính bên phải chiếm hết không gian */
+        .main-content {
+            padding: 20px;
+            width: 100%; /* Cho nội dung chính chiếm toàn bộ phần còn lại */
+        }
+
+        /* Bảng full width */
+        .table {
+            width: 100%; /* Cho bảng chiếm hết chiều rộng của nội dung chính */
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <!-- Sidebar Navbar (giữ nguyên không chỉnh sửa) -->
+    <div id="sidebar" th:replace="admin/admin-navbar :: sidebar"></div>
+
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <h2 class="mb-4">Danh sách Người Dùng</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn btn-info">Xem Chi Tiết</a>
+                    <form th:action="@{/admin/users/{id}/disable(id=${user.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-warning">Vô Hiệu Hóa</button>
+                    </form>
+                    <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
