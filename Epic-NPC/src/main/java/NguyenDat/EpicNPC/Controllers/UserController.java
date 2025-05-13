@@ -1,6 +1,7 @@
 package NguyenDat.EpicNPC.Controllers;
 
 import NguyenDat.EpicNPC.Entities.User;
+import NguyenDat.EpicNPC.Repositories.UserRepository;
 import NguyenDat.EpicNPC.Services.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -12,11 +13,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
+
 
     @GetMapping("/login")
     public String login() {
@@ -76,4 +81,13 @@ public class UserController {
         }
         return "redirect:/profile";  // Chuyển hướng lại trang thông tin cá nhân sau khi cập nhật avatar
     }
+
+    @GetMapping("/search")
+    public List<String> searchUsers(@RequestParam("query") String query) {
+        return userRepository.findByUsernameStartingWithIgnoreCase(query)
+                .stream()
+                .map(User::getUsername)
+                .toList();
+    }
+
 }

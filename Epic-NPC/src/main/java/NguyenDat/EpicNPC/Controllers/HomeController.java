@@ -17,6 +17,14 @@ public class HomeController {
 
     private final GameService gameService;
 
+    // Trang Trade Guardian
+    @GetMapping("/trade-guardian")
+    public String tradeGuardianPage(Model model) {
+        model.addAttribute("title", "Trade Guardian");
+        model.addAttribute("trade", new NguyenDat.EpicNPC.Entities.Trade()); // cần import đúng
+        return "trade-guardian"; // file nằm ở templates/trade-guardian.html
+    }
+
     // Trang chủ hiển thị danh sách "Recently Added"
     @GetMapping("/")
     public String home(Model model) {
@@ -61,6 +69,7 @@ public class HomeController {
         model.addAttribute("title", "User Profile");
         return "Users/userProfile"; // Sử dụng file templates/Users/userProfile.html
     }
+
 
     // Endpoint tìm kiếm cho AJAX
     @GetMapping("/api/search")

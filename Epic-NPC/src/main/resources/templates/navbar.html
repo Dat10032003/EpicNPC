@@ -13,6 +13,9 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <a href="/trade-guardian" class="btn btn-warning mr-3">
+        <i class="fas fa-shield-alt"></i> Trade Guardian
+    </a>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item d-flex align-items-center" th:if="${#authentication.principal != 'anonymousUser'}">
@@ -23,9 +26,12 @@
                 <a href="/messages" class="btn btn-outline-primary mr-3">
                     <i class="fas fa-envelope"></i>
                 </a>
-                <a href="#" class="btn btn-outline-primary mr-3" data-toggle="modal" data-target="#notificationModal">
-                    <i class="fas fa-bell" style="color: #ffc107;"></i>
-                    <span th:if="${unreadNotificationsCount > 0}" th:text="${unreadNotificationsCount}"></span>
+                <a href="#" class="btn btn-outline-primary position-relative mr-3" data-toggle="modal" data-target="#notificationModal">
+                    <i class="fas fa-bell" style="color: #ffc107; font-size: 1.2rem;"></i>
+                    <span th:if="${unreadNotificationsCount > 0}"
+                          th:text="${unreadNotificationsCount}"
+                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                     </span>
                 </a>
 
                 <a th:if="${#authorization.expression('hasAuthority(''ROLE_ADMIN'')')}" href="/admin" class="btn btn-outline-warning mr-3">Admin Dashboard</a>
@@ -43,9 +49,17 @@
 <!-- Include notification modal -->
 <div th:replace="~{notificationModal :: notificationModal}"></div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- ✅ jQuery trước -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<!-- ✅ PopperJS (cho Bootstrap 4) -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+<!-- ✅ Bootstrap JS cuối cùng -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
@@ -53,46 +67,52 @@
     const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
     let unreadCount = 0;
+    const badge = document.getElementById("notification-badge");
 
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        const currentUserId = /* Replace with user ID */;
+        const currentUserId = /*[[${#authentication.principal.id}]]*/ 1; // <-- Thay bằng Thymeleaf hoặc script injection
 
-        // Lắng nghe thông báo từ server dành cho người dùng hiện tại
+        // Lắng nghe topic thông báo cho user hiện tại
         stompClient.subscribe('/topic/notifications/' + currentUserId, function (notification) {
             displayNotification(notification.body);
         });
-    });
 
-    function displayNotification(message) {
-        // Cập nhật biểu tượng chuông
-        const bellIcon = document.querySelector(".fa-bell span");
-        unreadCount += 1;
-        bellIcon.textContent = unreadCount;
-
-        // Thêm thông báo vào modal
-        const notificationList = document.querySelector("#notificationModal .list-group");
-        const notificationItem = document.createElement("li");
-        notificationItem.className = "list-group-item d-flex justify-content-between align-items-center";
-        notificationItem.innerHTML = `<span>${message}</span>
-            <button class="btn btn-sm btn-outline-secondary" onclick="markAsRead(${unreadCount})">Mark as Read</button>`;
-        notificationList.appendChild(notificationItem);
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
+        // Fetch số lượng ban đầu
         fetch('/notifications/unreadCount')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
                 unreadCount = data.unreadCount;
-                document.querySelector(".fa-bell span").textContent = unreadCount > 0 ? unreadCount : '';
+                updateBadge();
             });
     });
 
-    function markAsRead(notificationId) {
-        fetch(`/notifications/markAsRead/${notificationId}`, { method: 'POST' })
+    function updateBadge() {
+        if (unreadCount > 0) {
+            badge.style.display = 'inline-block';
+            badge.textContent = unreadCount;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function displayNotification(message) {
+        unreadCount++;
+        updateBadge();
+
+        const list = document.getElementById("notification-list");
+        const item = document.createElement("li");
+        item.className = "list-group-item d-flex justify-content-between align-items-center";
+        item.innerHTML = `<span>${message}</span>
+                          <button class="btn btn-sm btn-outline-secondary" onclick="markAsReadFromModal(${unreadCount})">Mark as Read</button>`;
+        list.prepend(item);
+    }
+
+    function markAsReadFromModal(id) {
+        fetch(`/notifications/markAsRead/${id}`, { method: 'POST' })
             .then(() => {
-                unreadCount -= 1;
-                document.querySelector(".fa-bell span").textContent = unreadCount || '';
+                unreadCount--;
+                updateBadge();
             });
     }
 
@@ -100,9 +120,11 @@
         fetch('/notifications/markAllAsRead', { method: 'POST' })
             .then(() => {
                 unreadCount = 0;
-                document.querySelector(".fa-bell span").textContent = '';
+                updateBadge();
+                document.getElementById("notification-list").innerHTML = '';
             });
     }
 </script>
+
 
 
